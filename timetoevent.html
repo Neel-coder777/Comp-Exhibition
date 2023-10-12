@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Management Site</title>
+    <style>
+        table {
+            width: 100vw;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            font-size: 3rem;
+
+        }
+
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        h1 {
+            font-size: 6rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Events In Progress</h1>
+    <table>
+        <tr>
+            <th>Event</th>
+            <th>End Time</th>
+            <th>Venue</th>
+        </tr>
+        <tbody id="currentEvents">
+        </tbody>
+    </table>
+    <h1>Events</h1>
+
+    <table>
+        <tr>
+            <th>Event</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Venue</th>
+            <th>Time Left</th>
+        </tr>
+        <tbody id="eventTable">
+        </tbody>
+    </table>
+
+    <script>
+        // Define your events in JSON format
+        const currentEvents = document.getElementById("currentEvents");
+
+        const events = [
+            {
+                "name": "Event 1",
+                "startTime": "2023-10-12T09:00:00",
+                "endTime": "2023-10-12T14:57:00",
+                "venue": "Conference Room A",
+                current: false
+            },
+            {
+                "name": "Event 2",
+                "startTime": "2023-10-15T14:30:00",
+                "endTime": "2023-10-15T16:30:00",
+                "venue": "Auditorium",
+                current: false
+
+            }
+            // Add more events as needed
+        ];
+        
+        // Function to update the countdown timer
+        
+
+        function formatTime(inputDateTime) {
+        const date = new Date(inputDateTime);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const amOrPm = hours >= 12 ? 'p.m.' : 'a.m.';
+        const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+        const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
+        return formattedTime;
+        }
+        function appendCurrentEvent(event) {
+            if (event.current) return;
+            event.current = true;
+            const now = new Date();
+            const endTime = new Date(event.endTime);
+            const timeLeft = endTime - now;
+
+            const row = document.createElement("tr");
+            const nameCell = document.createElement("td");
+            nameCell.textContent = event.name;
+            const endTimeCell = document.createElement("td");
+            endTimeCell.textContent = formatTime(event.endTime);
+            const venueCell = document.createElement("td");
+            venueCell.textContent = event.venue;
+
+            row.appendChild(nameCell);
+            row.appendChild(endTimeCell);
+            row.appendChild(venueCell);
+            currentEvents.appendChild(row);
+            setTimeout(row.remove, timeLeft);
+        }
+        function updateCountdown(event) {
+            const now = new Date();
+            const startTime = new Date(event.startTime);
+            const timeLeft = startTime - now;
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            if (timeLeft > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            const endTime = new Date(event.endTime);
+            if (endTime - now > 0) {
+                appendCurrentEvent(event);
+                return `In Progress`;
+            };
+            return `Ended`;
+
+        }
+        // Populate the table with event data
+        const eventTable = document.getElementById("eventTable");
+        events.forEach((event) => {
+            const row = document.createElement("tr");
+            const nameCell = document.createElement("td");
+            nameCell.textContent = event.name;
+            const startTimeCell = document.createElement("td");
+            startTimeCell.textContent = formatTime(event.startTime);
+            const endTimeCell = document.createElement("td");
+            endTimeCell.textContent = formatTime(event.endTime);
+            const venueCell = document.createElement("td");
+            venueCell.textContent = event.venue;
+            const timeLeftCell = document.createElement("td");
+            timeLeftCell.className = "countdown";
+            timeLeftCell.textContent = updateCountdown(event);
+
+            row.appendChild(nameCell);
+            row.appendChild(startTimeCell);
+            row.appendChild(endTimeCell);
+            row.appendChild(venueCell);
+            row.appendChild(timeLeftCell);
+
+            eventTable.appendChild(row);
+
+            // Update countdown timer every second
+            setInterval(() => {
+                timeLeftCell.textContent = updateCountdown(event);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
