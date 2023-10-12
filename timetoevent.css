@@ -1,0 +1,46 @@
+table {
+    width: 100vw;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+table {
+    border-radius: 25px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    font-size: 3rem;
+}
+
+h1 {
+    font-size: 6rem;
+}
+
+body {
+    padding-left: 0px;
+    margin-left: 0px;
+    font-family: 'AR One Sans', sans-serif;
+}
+
+header {
+    background-color: rgb(242, 184, 24);
+    width: 100vw;
+    margin-top: 0px;
+    padding-top: 0px;
+    text-align: center;
+}
+
+.countdown {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+#header-sentence {
+    font-size: 5rem;
+    font-weight: bold;
+    color: white;
+}
